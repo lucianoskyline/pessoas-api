@@ -27,4 +27,6 @@ public class PeopleAddress {
 
     private Boolean principal;
 
+    private String uuid;
+
 }

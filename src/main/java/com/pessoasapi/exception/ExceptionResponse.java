@@ -7,7 +7,7 @@ public class ExceptionResponse {
 
     private String message;
 
-    ExceptionResponse(String message) {
+    public ExceptionResponse(String message) {
         this.message = message;
     }
 

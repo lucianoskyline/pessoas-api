@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PeopleRepository extends JpaRepository<People, Integer> {
+
+    People findByUuid(String uuid);
+
 }

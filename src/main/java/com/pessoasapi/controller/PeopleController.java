@@ -1,14 +1,13 @@
 package com.pessoasapi.controller;
 
+import com.pessoasapi.exception.BusinessException;
 import com.pessoasapi.exception.ExceptionResponse;
 import com.pessoasapi.request.PeopleCreateRequest;
+import com.pessoasapi.request.PeopleUpdateRequest;
 import com.pessoasapi.service.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -25,6 +24,25 @@ public class PeopleController {
             peopleService.create(request);
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(ex.getMessage()));
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity update(@Valid @RequestBody PeopleUpdateRequest request) {
+        try {
+            peopleService.update(request);
+            return ResponseEntity.ok().build();
+        } catch (BusinessException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity select(@PathVariable String uuid) {
+        try {
+            return ResponseEntity.ok(peopleService.select(uuid));
+        } catch (BusinessException ex) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(ex.getMessage()));
         }
     }

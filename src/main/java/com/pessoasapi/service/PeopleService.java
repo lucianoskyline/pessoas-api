@@ -10,8 +10,13 @@ import com.pessoasapi.request.PeopleUpdateRequest;
 import com.pessoasapi.response.PeopleSelectResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -53,6 +58,27 @@ public class PeopleService {
         }
 
         PeopleSelectResponse response = new ModelMapper().map(person, PeopleSelectResponse.class);
+        return response;
+    }
+
+    public Page<PeopleSelectResponse> search(String name, Pageable pageable) {
+        Page<People> people = null;
+        if (!name.isBlank()) {
+            people = peopleRepository.findByNameContaining(name, pageable);
+        } else {
+            people = peopleRepository.findAll(pageable);
+        }
+        return new PageImpl<>(convertToResponse(people.getContent()), pageable, pageable.getPageNumber());
+    }
+
+    public List<PeopleSelectResponse> convertToResponse(List<People> content) {
+        List<PeopleSelectResponse> response = new ArrayList<>();
+
+        ModelMapper modelMapper = new ModelMapper();
+        content.forEach(c -> {
+            PeopleSelectResponse r = modelMapper.map(c, PeopleSelectResponse.class);
+            response.add(r);
+        });
         return response;
     }
 

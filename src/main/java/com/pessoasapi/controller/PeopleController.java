@@ -3,9 +3,11 @@ package com.pessoasapi.controller;
 import com.pessoasapi.exception.BusinessException;
 import com.pessoasapi.exception.ExceptionResponse;
 import com.pessoasapi.request.PeopleCreateRequest;
+import com.pessoasapi.request.PeopleSearchRequest;
 import com.pessoasapi.request.PeopleUpdateRequest;
 import com.pessoasapi.service.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +45,15 @@ public class PeopleController {
         try {
             return ResponseEntity.ok(peopleService.select(uuid));
         } catch (BusinessException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(ex.getMessage()));
+        }
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity search(@Valid @RequestBody PeopleSearchRequest request, Pageable pageable) {
+        try {
+            return ResponseEntity.ok(peopleService.search(request.getName(), pageable));
+        } catch (Exception ex) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(ex.getMessage()));
         }
     }

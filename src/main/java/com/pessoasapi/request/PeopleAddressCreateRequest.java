@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class PeopleAddressCreateRequest {
 
+    private String uuid;
+
     @NotBlank(message = "Informe o endereço")
     private String address;
 

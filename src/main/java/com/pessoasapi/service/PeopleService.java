@@ -41,21 +41,23 @@ public class PeopleService {
     }
 
     public void update(PeopleUpdateRequest request) {
-        People person = peopleRepository.findByUuid(request.getUuid());
-        if (person == null) {
-            throw new BusinessException("Cadastro não encontrado");
-        }
+        People person = findByUuid(request.getUuid());
 
         person.setBirthDate(request.getBirthDate());
         person.setName(request.getName());
         peopleRepository.save(person);
     }
 
-    public PeopleSelectResponse select(String uuid) {
+    public People findByUuid(String uuid){
         People person = peopleRepository.findByUuid(uuid);
         if (person == null) {
             throw new BusinessException("Cadastro não encontrado");
         }
+        return person;
+    }
+
+    public PeopleSelectResponse select(String uuid) {
+        People person = findByUuid(uuid);
 
         PeopleSelectResponse response = new ModelMapper().map(person, PeopleSelectResponse.class);
         return response;

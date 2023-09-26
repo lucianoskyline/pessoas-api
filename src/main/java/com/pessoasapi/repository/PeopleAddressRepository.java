@@ -12,4 +12,6 @@ public interface PeopleAddressRepository extends JpaRepository<PeopleAddress, In
 
     List<PeopleAddress> findByPerson(People person);
 
+    PeopleAddress findByUuid(String uuid);
+
 }

@@ -6,6 +6,7 @@ import com.pessoasapi.model.PeopleAddress;
 import com.pessoasapi.repository.PeopleAddressRepository;
 import com.pessoasapi.repository.PeopleRepository;
 import com.pessoasapi.request.PeopleAddressCreateRequest;
+import com.pessoasapi.request.PeopleAddressUpdateRequest;
 import com.pessoasapi.response.PeopleAddressResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +25,35 @@ public class PeopleAddressService {
     @Autowired
     private PeopleRepository peopleRepository;
 
+    @Autowired
+    private PeopleService peopleService;
+
 
     public void create(PeopleAddressCreateRequest request) {
-        if (request.getUuid().isBlank()) {
+        if (request.getPerson().isBlank()) {
             throw new BusinessException("Informe o identificador da pessoa");
         }
 
-        People person = peopleRepository.findByUuid(request.getUuid());
-        if (person == null) {
-            throw new BusinessException("Cadastro não encontrado");
-        }
+        People person = peopleService.findByUuid(request.getPerson());
 
         ModelMapper modelMapper = new ModelMapper();
         PeopleAddress personAddress = modelMapper.map(request, PeopleAddress.class);
         personAddress.setUuid(UUID.randomUUID().toString());
         personAddress.setPerson(person);
         personAddress = peopleAddressRepository.save(personAddress);
-        if(personAddress.getPrincipal()){
+        if (personAddress.getPrincipal()) {
+            disableOthersPrincipal(personAddress);
+        }
+    }
+
+    public void update(PeopleAddressUpdateRequest request) {
+        PeopleAddress personAddress = peopleAddressRepository.findByUuid(request.getUuid());
+        if (personAddress == null) {
+            throw new BusinessException("Cadastro não encontrado");
+        }
+        personAddress.setPrincipal(request.getPrincipal());
+        personAddress = peopleAddressRepository.save(personAddress);
+        if (personAddress.getPrincipal()) {
             disableOthersPrincipal(personAddress);
         }
     }
@@ -56,10 +69,8 @@ public class PeopleAddressService {
     }
 
     public List<PeopleAddressResponse> search(String uuid) {
-        People person = peopleRepository.findByUuid(uuid);
-        if (person == null) {
-            throw new BusinessException("Cadastro não encontrado");
-        }
+        People person = peopleService.findByUuid(uuid);
+
         List<PeopleAddress> address = peopleAddressRepository.findByPerson(person);
         return convertToResponse(address);
     }

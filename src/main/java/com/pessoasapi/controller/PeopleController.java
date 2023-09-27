@@ -23,8 +23,7 @@ public class PeopleController {
     @PostMapping
     public ResponseEntity create(@Valid @RequestBody PeopleCreateRequest request) {
         try {
-            peopleService.create(request);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(peopleService.create(request));
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(ex.getMessage()));
         }

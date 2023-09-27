@@ -4,7 +4,6 @@ import com.pessoasapi.exception.BusinessException;
 import com.pessoasapi.model.People;
 import com.pessoasapi.model.PeopleAddress;
 import com.pessoasapi.repository.PeopleAddressRepository;
-import com.pessoasapi.repository.PeopleRepository;
 import com.pessoasapi.request.PeopleAddressCreateRequest;
 import com.pessoasapi.request.PeopleAddressUpdateRequest;
 import com.pessoasapi.response.PeopleAddressResponse;
@@ -23,13 +22,10 @@ public class PeopleAddressService {
     private PeopleAddressRepository peopleAddressRepository;
 
     @Autowired
-    private PeopleRepository peopleRepository;
-
-    @Autowired
     private PeopleService peopleService;
 
 
-    public void create(PeopleAddressCreateRequest request) {
+    public PeopleAddressResponse create(PeopleAddressCreateRequest request) {
         if (request.getPerson().isBlank()) {
             throw new BusinessException("Informe o identificador da pessoa");
         }
@@ -44,6 +40,9 @@ public class PeopleAddressService {
         if (personAddress.getPrincipal()) {
             disableOthersPrincipal(personAddress);
         }
+
+        PeopleAddressResponse response = modelMapper.map(personAddress, PeopleAddressResponse.class);
+        return response;
     }
 
     public void update(PeopleAddressUpdateRequest request) {

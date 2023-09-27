@@ -28,7 +28,7 @@ public class PeopleService {
     @Autowired
     private PeopleAddressRepository peopleAddressRepository;
 
-    public void create(PeopleCreateRequest request) {
+    public PeopleSelectResponse create(PeopleCreateRequest request) {
         ModelMapper modelMapper = new ModelMapper();
         People person = modelMapper.map(request, People.class);
         person.setUuid(UUID.randomUUID().toString());
@@ -38,6 +38,8 @@ public class PeopleService {
         personAddress.setUuid(UUID.randomUUID().toString());
         personAddress.setPerson(peopleRepository.save(person));
         peopleAddressRepository.save(personAddress);
+        PeopleSelectResponse response=modelMapper.map(person,PeopleSelectResponse.class);
+        return response;
     }
 
     public void update(PeopleUpdateRequest request) {

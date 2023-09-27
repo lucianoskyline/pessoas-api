@@ -22,8 +22,7 @@ public class PeopleAddresController {
     @PostMapping
     public ResponseEntity create(@Valid @RequestBody PeopleAddressCreateRequest request) {
         try {
-            peopleAddressService.create(request);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(peopleAddressService.create(request));
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(ex.getMessage()));
         }
